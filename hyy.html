@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阿炳的秘密流星花园</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        。shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 1px white;
+            animation: shooting-star linear infinite;
+            transform: rotate(-45deg);
+        }
+
+        .shooting-star.brighter {
+            width: 3px;
+            height: 3px;
+            box-shadow: 0 0 15px 2px white;
+        }
+
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,1), transparent);
+        }
+
+        .twinkle-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 5px white;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes shooting-star {
+            0% {
+                transform: translateX(0) translateY(0) rotate(-45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(1000px) translateY(1000px) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        #main-ui {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.5s ease;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.7);
+            text-align: center;
+        }
+
+        .enter-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+        }
+
+        .enter-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
+        }
+
+        #hearts-ui {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .heart {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            animation: float 6s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .heart svg {
+            width: 100%;
+            height: 100%;
+            fill: #ff69b4;
+            filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.7));
+            transition: all 0.3s ease;
+        }
+
+        .heart:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .back-btn .arrow {
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 15px solid white;
+            margin-right: 5px;
+            filter: drop-shadow(0 0 3px rgba(255, 105, 180, 0.7));
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .enter-btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            
+            .heart {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="stars-container"></div>
+    
+    <div id="main-ui">
+        <h1>送姐姐花花</h1>
+        <button class="enter-btn" id="enter-btn">接受</button>
+    </div>
+    
+    <div id="hearts-ui">
+        <!-- 18个爱心形状 -->
+        <div class="heart" data-sound="heart1"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart2"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart3"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart4"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart5"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart6"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart7"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart8"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart9"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart10"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart11"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart12"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart13"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart14"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart15"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart16"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart17"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="heart" data-sound="heart18"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+    </div>
+    
+    <button class="back-btn" id="back-btn">
+        <div class="arrow"></div>
+    </button>
+
+    <script>
+        // 音频管理器
+        const AudioManager = {
+            // 入口音频列表
+            entryAudios: [
+                'lbm/hyy/hello.mp3',
+                '"E:\hyy\姐姐你好.m4a"',
+                '"E:\hyy\贺语尧你又来啦.m4a"'
+            ],
+            
+            // 爱心音频列表
+            heartAudios: [
+                'lbm/hyy/hyy辛苦你了.mp3',
+                'lbm/hyy/喜欢姐姐.mp3',
+                'lbm/hyy/蛋糕.mp3',
+                'heart4.m4a',
+                'heart5.m4a',
+                'heart6.m4a',
+                'heart7.m4a',
+                'heart8.m4a',
+                'heart9.m4a',
+                'heart10.m4a',
+                'heart11.m4a',
+                'heart12.m4a',
+                'heart13.m4a',
+                'heart14.m4a',
+                'heart15.m4a',
+                'heart16.m4a',
+                'heart17.m4a',
+                'heart18.m4a'
+            ],
+            
+            // 当前播放的音频
+            currentAudio: null,
+            
+            // 随机播放入口音频
+            playRandomEntryAudio: function() {
+                // 停止当前播放的音频
+                if (this.currentAudio) {
+                    this.currentAudio.pause();
+                    this.currentAudio.currentTime = 0;
+                }
+                
+                // 随机选择一个入口音频
+                const randomIndex = Math.floor(Math.random() * this.entryAudios.length);
+                const audioFile = this.entryAudios[randomIndex];
+                
+                // 创建并播放新音频
+                this.currentAudio = new Audio(audioFile);
+                this.currentAudio.volume = 0.4;
+                this.currentAudio.play().catch(e => console.log("Autoplay not allowed:", e));
+            },
+            
+            // 播放指定爱心音频
+            playHeartAudio: function(index) {
+                // 确保索引在有效范围内
+                index = Math.max(0, Math.min(index, this.heartAudios.length - 1));
+                
+                // 停止当前播放的音频
+                if (this.currentAudio) {
+                    this.currentAudio.pause();
+                    this.currentAudio.currentTime = 0;
+                }
+                
+                // 播放新的爱心音频
+                const audioFile = this.heartAudios[index];
+                this.currentAudio = new Audio(audioFile);
+                this.currentAudio.volume = 0.6;
+                this.currentAudio.play().catch(e => console.log("Autoplay not allowed:", e));
+            }
+        };
+
+        // 创建流星背景
+        function createShootingStars() {
+            const container = document.getElementById('stars-container');
+            
+            // 创建流星（60个）
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                
+                // 20%的流星更明亮
+                if (i % 5 === 0) {
+                    star.className = 'shooting-star brighter';
+                } else {
+                    star.className = 'shooting-star';
+                }
+                
+                // 随机位置
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机延迟和持续时间
+                const delay = Math.random() * 15;
+                const duration = 4 + Math.random() * 7;
+                
+                star.style.animationDelay = `${delay}s`;
+                star.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(star);
+            }
+            
+            // 创建小星星背景（200个闪烁星星）
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'twinkle-star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机大小（1-4px）
+                const size = 1 + Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // 随机动画参数
+                const delay = Math.random() * 5;
+                const duration = 2 + Math.random() * 5;
+                
+                star.style.animationDelay = `${delay}s`;
+                star.style.animationDuration = `${duration}s`;
+                
+                // 随机颜色（部分星星带粉色/蓝色）
+                if (Math.random() > 0.7) {
+                    star.style.backgroundColor = '#9cf';
+                    star.style.boxShadow = '0 0 10px rgba(153, 204, 255, 0.8)';
+                } else if (Math.random() > 0.5) {
+                    star.style.backgroundColor = '#f9f';
+                    star.style.boxShadow = '0 0 10px rgba(255, 153, 255, 0.8)';
+                }
+                
+                container.appendChild(star);
+            }
+        }
+
+        // 切换界面
+        function showHeartsUI() {
+            document.getElementById('main-ui').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('main-ui').style.display = 'none';
+                document.getElementById('hearts-ui').style.opacity = '1';
+                document.getElementById('hearts-ui').style.pointerEvents = 'auto';
+                document.getElementById('back-btn').style.opacity = '1';
+                document.getElementById('back-btn').style.pointerEvents = 'auto';
+                
+                // 播放随机入口音频
+                AudioManager.playRandomEntryAudio();
+            }, 1500);
+        }
+
+        function showMainUI() {
+            document.getElementById('hearts-ui').style.opacity = '0';
+            document.getElementById('hearts-ui').style.pointerEvents = 'none';
+            document.getElementById('back-btn').style.opacity = '0';
+            document.getElementById('back-btn').style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                document.getElementById('main-ui').style.display = 'flex';
+                document.getElementById('main-ui').style.opacity = '1';
+            }, 1500);
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            createShootingStars();
+            
+            // 为爱心添加漂浮动画延迟
+            document.querySelectorAll('.heart').forEach((heart, index) => {
+                heart.style.animationDelay = `${index * 0.3}s`;
+            });
+            
+            // 添加CSS规则
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .heart-particle {
+                    position: absolute;
+                    width: 10px;
+                    height: 10px;
+                    background: white;
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 100;
+                    animation: particle-fly 1s ease-out forwards;
+                    box-shadow: 0 0 10px #ff69b4;
+                }
+                
+                @keyframes particle-fly {
+                    0% {
+                        transform: scale(0.5);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate(var(--tx, 0), var(--ty, -100px)) scale(0);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 移动端处理
+            if (/Mobi|Android/i.test(navigator.userAgent)) {
+                document.body.style.overflow = 'hidden';
+                document.body.style.touchAction = 'manipulation';
+            }
+        });
+
+        // 添加事件监听
+        document.getElementById('enter-btn').addEventListener('click', showHeartsUI);
+        document.getElementById('back-btn').addEventListener('click', showMainUI);
+
+        // 添加爱心点击事件
+        document.querySelectorAll('.heart').forEach((heart, index) => {
+            heart.addEventListener('click', () => {
+                // 播放对应的爱心音频
+                AudioManager.playHeartAudio(index);
+                
+                // 添加点击效果
+                heart.style.transform = 'scale(0.85)';
+                heart.style.opacity = '0.7';
+                
+                setTimeout(() => {
+                    heart.style.transform = '';
+                    heart.style.opacity = '';
+                }, 300);
+                
+                // 创建点击特效
+                const particle = document.createElement('div');
+                particle.className = 'heart-particle';
+                const heartRect = heart.getBoundingClientRect();
+                particle.style.left = `${heartRect.left + heartRect.width/2}px`;
+                particle.style.top = `${heartRect.top + heartRect.height/2}px`;
+                document.body.appendChild(particle);
+                
+                // 随机粒子方向
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 100 + Math.random() * 100;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                
+                setTimeout(() => {
+                    document.body.removeChild(particle);
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
